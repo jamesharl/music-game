@@ -1,0 +1,60 @@
+# Music Game Requirements
+
+## System Requirements
+
+### Operating System
+- Windows 10 or later
+- macOS 10.15 (Catalina) or later
+- Ubuntu 20.04 LTS or later
+- Any modern Linux distribution with GUI support
+
+### Hardware
+- Minimum 4GB RAM (8GB recommended)
+- 200MB free disk space
+- Audio output device (speakers or headphones)
+- Mouse or trackpad for interaction
+
+## Software Requirements
+
+### Required Software
+1. **Node.js** - v16.0.0 or higher
+   - Download: https://nodejs.org/
+   - Includes npm (Node Package Manager)
+
+2. **npm** - v7.0.0 or higher
+   - Comes bundled with Node.js
+   - Used for package management
+
+3. **Git** - Any recent version
+   - Download: https://git-scm.com/
+   - Used for cloning the repository
+
+### Browser Requirements
+One of the following modern browsers:
+- Google Chrome 88+
+- Mozilla Firefox 85+
+- Safari 14+
+- Microsoft Edge 88+
+- Opera 74+
+
+**Important**: Browser must support Web Audio API for audio functionality.
+
+## Development Dependencies
+All JavaScript dependencies are managed through npm and listed in package.json:
+- React 18.2.0
+- Vite 4.4.5
+- Tailwind CSS 3.3.3
+- Tone.js 14.7.77
+- Additional development tools (ESLint, PostCSS, etc.)
+
+## Network Requirements
+- Internet connection required for:
+  - Initial repository cloning
+  - npm package installation
+  - Downloading Node.js and Git (if not installed)
+- No internet required for running the game locally after setup
+
+## Optional Tools
+- Code editor (VS Code, Sublime Text, etc.)
+- Terminal/Command Prompt
+- Browser DevTools for debugging

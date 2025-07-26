@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import PropTypes from 'prop-types'
 import * as Tone from 'tone'
 import { initializeAudio, ensureAudioContext } from '../utils/audioContext'
+import RecordingControl from './RecordingControl'
 
 const Xylophone = ({ volume, onHome }) => {
   const [struckBars, setStruckBars] = useState(new Set())
@@ -148,6 +149,11 @@ const Xylophone = ({ volume, onHome }) => {
 
       <div className="mt-8 text-center text-gray-400">
         <p>8 colorful bars • Each bar plays a different note</p>
+      </div>
+
+      {/* Recording Control */}
+      <div className="mt-8 max-w-md mx-auto">
+        <RecordingControl instrument="Xylophone" />
       </div>
     </div>
   )

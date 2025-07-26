@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import PropTypes from 'prop-types'
 import * as Tone from 'tone'
 import { initializeAudio, ensureAudioContext } from '../utils/audioContext'
+import RecordingControl from './RecordingControl'
 
 const DrumKit = ({ volume, onHome }) => {
   const [hitDrums, setHitDrums] = useState(new Set())
@@ -231,6 +232,11 @@ const DrumKit = ({ volume, onHome }) => {
 
       <div className="mt-8 text-center text-gray-400">
         <p>Complete drum kit • Kick, Snare, Hi-Hat, Crash, and Toms</p>
+      </div>
+
+      {/* Recording Control */}
+      <div className="mt-8 max-w-md mx-auto">
+        <RecordingControl instrument="Drum Kit" />
       </div>
     </div>
   )

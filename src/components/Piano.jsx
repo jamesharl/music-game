@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import PropTypes from 'prop-types'
 import * as Tone from 'tone'
 import { initializeAudio, ensureAudioContext } from '../utils/audioContext'
+import RecordingControl from './RecordingControl'
 
 const Piano = ({ volume, onHome }) => {
   const [pressedKeys, setPressedKeys] = useState(new Set())
@@ -177,6 +178,11 @@ const Piano = ({ volume, onHome }) => {
 
       <div className="mt-8 text-center text-gray-400">
         <p>3 full octaves • Click and hold for sustained notes</p>
+      </div>
+
+      {/* Recording Control */}
+      <div className="mt-8 max-w-md mx-auto">
+        <RecordingControl instrument="Piano" />
       </div>
     </div>
   )

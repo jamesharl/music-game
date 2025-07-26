@@ -1,3 +1,5 @@
+import PropTypes from 'prop-types'
+
 const VolumeControl = ({ volume, onVolumeChange }) => {
   return (
     <div className="fixed top-4 right-4 z-50">
@@ -20,6 +22,11 @@ const VolumeControl = ({ volume, onVolumeChange }) => {
       </div>
     </div>
   )
+}
+
+VolumeControl.propTypes = {
+  volume: PropTypes.number.isRequired,
+  onVolumeChange: PropTypes.func.isRequired
 }
 
 export default VolumeControl

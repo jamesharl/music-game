@@ -1,5 +1,7 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
+import PropTypes from 'prop-types'
 import * as Tone from 'tone'
+import { initializeAudio, ensureAudioContext } from '../utils/audioContext'
 
 const Xylophone = ({ volume, onHome }) => {
   const [struckBars, setStruckBars] = useState(new Set())
@@ -8,23 +10,26 @@ const Xylophone = ({ volume, onHome }) => {
 
   useEffect(() => {
     const initAudio = async () => {
-      if (Tone.context.state !== 'running') {
-        await Tone.start()
+      try {
+        await initializeAudio()
+        
+        synthRef.current = new Tone.Synth({
+          oscillator: {
+            type: 'sine'
+          },
+          envelope: {
+            attack: 0.01,
+            decay: 0.3,
+            sustain: 0.1,
+            release: 1.2
+          }
+        }).toDestination()
+        
+        setIsLoaded(true)
+      } catch (error) {
+        console.error('Failed to initialize xylophone audio:', error)
+        throw error
       }
-      
-      synthRef.current = new Tone.Synth({
-        oscillator: {
-          type: 'sine'
-        },
-        envelope: {
-          attack: 0.01,
-          decay: 0.3,
-          sustain: 0.1,
-          release: 1.2
-        }
-      }).toDestination()
-      
-      setIsLoaded(true)
     }
 
     initAudio()
@@ -53,28 +58,29 @@ const Xylophone = ({ volume, onHome }) => {
     { note: 'C5', color: 'bg-pink-500', name: 'C' }
   ]
 
-  const playNote = async (note, index) => {
+  const playNote = useCallback(async (note, index) => {
     if (!isLoaded || !synthRef.current) return
     
     try {
-      if (Tone.context.state !== 'running') {
-        await Tone.start()
-      }
+      await ensureAudioContext()
       
       synthRef.current.triggerAttackRelease(note, '4n')
       setStruckBars(prev => new Set([...prev, index]))
       
-      setTimeout(() => {
+      const timeoutId = setTimeout(() => {
         setStruckBars(prev => {
           const newBars = new Set(prev)
           newBars.delete(index)
           return newBars
         })
       }, 300)
+      
+      // Store timeout ID for cleanup
+      return () => clearTimeout(timeoutId)
     } catch (error) {
       console.error('Error playing note:', error)
     }
-  }
+  }, [isLoaded])
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4 py-8">
@@ -145,6 +151,11 @@ const Xylophone = ({ volume, onHome }) => {
       </div>
     </div>
   )
+}
+
+Xylophone.propTypes = {
+  volume: PropTypes.number.isRequired,
+  onHome: PropTypes.func.isRequired
 }
 
 export default Xylophone

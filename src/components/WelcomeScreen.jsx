@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import PropTypes from 'prop-types'
 
 const WelcomeScreen = ({ onSelectInstrument }) => {
   const [hoveredCard, setHoveredCard] = useState(null)
@@ -79,6 +80,10 @@ const WelcomeScreen = ({ onSelectInstrument }) => {
       </div>
     </div>
   )
+}
+
+WelcomeScreen.propTypes = {
+  onSelectInstrument: PropTypes.func.isRequired
 }
 
 export default WelcomeScreen

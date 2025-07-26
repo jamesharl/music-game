@@ -1,5 +1,7 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
+import PropTypes from 'prop-types'
 import * as Tone from 'tone'
+import { initializeAudio, ensureAudioContext } from '../utils/audioContext'
 
 const DrumKit = ({ volume, onHome }) => {
   const [hitDrums, setHitDrums] = useState(new Set())
@@ -8,9 +10,8 @@ const DrumKit = ({ volume, onHome }) => {
 
   useEffect(() => {
     const initAudio = async () => {
-      if (Tone.context.state !== 'running') {
-        await Tone.start()
-      }
+      try {
+        await initializeAudio()
       
       drumsRef.current = {
         kick: new Tone.MembraneSynth({
@@ -59,6 +60,10 @@ const DrumKit = ({ volume, onHome }) => {
       }
       
       setIsLoaded(true)
+      } catch (error) {
+        console.error('Failed to initialize drum kit audio:', error)
+        throw error
+      }
     }
 
     initAudio()
@@ -80,13 +85,11 @@ const DrumKit = ({ volume, onHome }) => {
     })
   }, [volume])
 
-  const playDrum = async (drumType, note = null) => {
+  const playDrum = useCallback(async (drumType) => {
     if (!isLoaded || !drumsRef.current[drumType]) return
     
     try {
-      if (Tone.context.state !== 'running') {
-        await Tone.start()
-      }
+      await ensureAudioContext()
       
       const drum = drumsRef.current[drumType]
       
@@ -106,17 +109,20 @@ const DrumKit = ({ volume, onHome }) => {
       
       setHitDrums(prev => new Set([...prev, drumType]))
       
-      setTimeout(() => {
+      const timeoutId = setTimeout(() => {
         setHitDrums(prev => {
           const newDrums = new Set(prev)
           newDrums.delete(drumType)
           return newDrums
         })
       }, 200)
+      
+      // Store timeout ID for cleanup
+      return () => clearTimeout(timeoutId)
     } catch (error) {
       console.error('Error playing drum:', error)
     }
-  }
+  }, [isLoaded])
 
   const drums = [
     {
@@ -228,6 +234,11 @@ const DrumKit = ({ volume, onHome }) => {
       </div>
     </div>
   )
+}
+
+DrumKit.propTypes = {
+  volume: PropTypes.number.isRequired,
+  onHome: PropTypes.func.isRequired
 }
 
 export default DrumKit

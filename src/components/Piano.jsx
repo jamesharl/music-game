@@ -1,5 +1,7 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
+import PropTypes from 'prop-types'
 import * as Tone from 'tone'
+import { initializeAudio, ensureAudioContext } from '../utils/audioContext'
 
 const Piano = ({ volume, onHome }) => {
   const [pressedKeys, setPressedKeys] = useState(new Set())
@@ -8,23 +10,26 @@ const Piano = ({ volume, onHome }) => {
 
   useEffect(() => {
     const initAudio = async () => {
-      if (Tone.context.state !== 'running') {
-        await Tone.start()
+      try {
+        await initializeAudio()
+        
+        synthRef.current = new Tone.Synth({
+          oscillator: {
+            type: 'triangle'
+          },
+          envelope: {
+            attack: 0.1,
+            decay: 0.2,
+            sustain: 0.5,
+            release: 0.8
+          }
+        }).toDestination()
+        
+        setIsLoaded(true)
+      } catch (error) {
+        console.error('Failed to initialize piano audio:', error)
+        throw error
       }
-      
-      synthRef.current = new Tone.Synth({
-        oscillator: {
-          type: 'triangle'
-        },
-        envelope: {
-          attack: 0.1,
-          decay: 0.2,
-          sustain: 0.5,
-          release: 0.8
-        }
-      }).toDestination()
-      
-      setIsLoaded(true)
     }
 
     initAudio()
@@ -86,28 +91,29 @@ const Piano = ({ volume, onHome }) => {
     { note: 'B5', type: 'white', position: 20 }
   ]
 
-  const playNote = async (note) => {
+  const playNote = useCallback(async (note) => {
     if (!isLoaded || !synthRef.current) return
     
     try {
-      if (Tone.context.state !== 'running') {
-        await Tone.start()
-      }
+      await ensureAudioContext()
       
       synthRef.current.triggerAttackRelease(note, '8n')
       setPressedKeys(prev => new Set([...prev, note]))
       
-      setTimeout(() => {
+      const timeoutId = setTimeout(() => {
         setPressedKeys(prev => {
           const newKeys = new Set(prev)
           newKeys.delete(note)
           return newKeys
         })
       }, 150)
+      
+      // Store timeout ID for cleanup
+      return () => clearTimeout(timeoutId)
     } catch (error) {
       console.error('Error playing note:', error)
     }
-  }
+  }, [isLoaded])
 
   const whiteKeys = notes.filter(n => n.type === 'white')
   const blackKeys = notes.filter(n => n.type === 'black')
@@ -174,6 +180,11 @@ const Piano = ({ volume, onHome }) => {
       </div>
     </div>
   )
+}
+
+Piano.propTypes = {
+  volume: PropTypes.number.isRequired,
+  onHome: PropTypes.func.isRequired
 }
 
 export default Piano

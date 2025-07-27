@@ -3,6 +3,7 @@ import WelcomeScreen from './components/WelcomeScreen'
 import Piano from './components/Piano'
 import Xylophone from './components/Xylophone'
 import DrumKit from './components/DrumKit'
+import Guitar from './components/Guitar'
 import VolumeControl from './components/VolumeControl'
 import ErrorBoundary from './components/ErrorBoundary'
 
@@ -36,6 +37,12 @@ function App() {
         return (
           <ErrorBoundary>
             <DrumKit volume={volume} onHome={goHome} />
+          </ErrorBoundary>
+        )
+      case 'guitar':
+        return (
+          <ErrorBoundary>
+            <Guitar volume={volume} onHome={goHome} />
           </ErrorBoundary>
         )
       default:

@@ -25,6 +25,13 @@ const WelcomeScreen = ({ onSelectInstrument }) => {
       description: 'Create rhythmic beats with a complete drum set',
       icon: '🥁',
       gradient: 'from-red-500 to-orange-600'
+    },
+    {
+      id: 'guitar',
+      name: 'Guitar',
+      description: 'Strum chords and play melodies on a 6-string guitar',
+      icon: '🎸',
+      gradient: 'from-amber-500 to-orange-600'
     }
   ]
 
@@ -39,7 +46,7 @@ const WelcomeScreen = ({ onSelectInstrument }) => {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl w-full">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl w-full">
         {instruments.map((instrument) => (
           <div
             key={instrument.id}
